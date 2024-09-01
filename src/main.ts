@@ -15,6 +15,7 @@ import {
   BALL_STARTY,
 } from "./setup";
 import { createBricks } from "./helper";
+import { CollistionCheck } from "./collision";
 
 let gameOver = false;
 let socre = 0;
@@ -33,7 +34,8 @@ function gameLoop(
   view: CanvasView,
   bricks: Brick[],
   paddle: Paddle,
-  ball: Ball
+  ball: Ball,
+  collision: CollistionCheck
 ) {
   view.clear();
   view.drawBrick(bricks);
@@ -42,6 +44,14 @@ function gameLoop(
   //move ball
   ball.moveBall();
   //move Pad
+
+  collision.checkBallCollision(ball, paddle, view);
+  collision.isCollidingBricks(ball, bricks);
+
+  // if (collidingBrick) {
+  //   score += 1;
+  //   view.drawScore(score);
+  // }
   if (
     (paddle.isMovingL && paddle.pos.x > 0) ||
     (paddle.isMovingR && paddle.pos.x < view.canvas.width - paddle.width)
@@ -49,13 +59,14 @@ function gameLoop(
     paddle.movePaddle();
   }
 
-  requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball));
+  requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball, collision));
 }
 
 function startGame(view: CanvasView) {
   socre = 0;
   view.drawInfo("");
   view.drawScore(0);
+  const collision = new CollistionCheck();
   const bricks = createBricks();
   const ball = new Ball(
     BALL_SPEED,
@@ -74,7 +85,7 @@ function startGame(view: CanvasView) {
     }
   );
 
-  gameLoop(view, bricks, paddle, ball);
+  gameLoop(view, bricks, paddle, ball, collision);
 }
 
 const view = new CanvasView("#playField");
