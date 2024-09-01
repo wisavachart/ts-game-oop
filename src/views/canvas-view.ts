@@ -35,14 +35,14 @@ export class CanvasView {
     if (this.info) this.info.innerHTML = text;
   }
 
-  drawSprite(brick: Brick | Paddle): void {
-    if (!brick) return;
+  drawSprite(sprite: Brick | Paddle | Ball): void {
+    if (!sprite) return;
     this.context?.drawImage(
-      brick.image,
-      brick.pos.x,
-      brick.pos.y,
-      brick.width,
-      brick.height
+      sprite.image,
+      sprite.pos.x,
+      sprite.pos.y,
+      sprite.width,
+      sprite.height
     );
   }
 
