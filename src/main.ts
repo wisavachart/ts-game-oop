@@ -18,7 +18,7 @@ import { createBricks } from "./helper";
 import { CollistionCheck } from "./collision";
 
 let gameOver = false;
-let socre = 0;
+let score = 0;
 
 function setGameOver(view: CanvasView) {
   view.drawInfo("GAME OVER");
@@ -46,12 +46,18 @@ function gameLoop(
   //move Pad
 
   collision.checkBallCollision(ball, paddle, view);
-  collision.isCollidingBricks(ball, bricks);
+  const collidingBrick = collision.isCollidingBricks(ball, bricks);
+  if (collidingBrick) {
+    score += 1;
+    view.drawScore(score);
+  }
+  // Game Over when ball leaves playField
+  if (ball.pos.y > view.canvas.height) gameOver = true;
+  // If game won, set gameOver and display win
+  if (bricks.length === 0) return setGameWin(view);
+  // Return if gameover and don't run the requestAnimationFrame
+  if (gameOver) return setGameOver(view);
 
-  // if (collidingBrick) {
-  //   score += 1;
-  //   view.drawScore(score);
-  // }
   if (
     (paddle.isMovingL && paddle.pos.x > 0) ||
     (paddle.isMovingR && paddle.pos.x < view.canvas.width - paddle.width)
@@ -63,7 +69,7 @@ function gameLoop(
 }
 
 function startGame(view: CanvasView) {
-  socre = 0;
+  score = 0;
   view.drawInfo("");
   view.drawScore(0);
   const collision = new CollistionCheck();
